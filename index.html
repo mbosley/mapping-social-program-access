@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapping Access to Social Programs</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,sans-serif;color:#29322e;background:#fafaf7}
+*{box-sizing:border-box}body{margin:0}main{max-width:980px;margin:auto;padding:40px 30px 28px}
+h1{font-size:32px;font-weight:500;letter-spacing:-1px;margin:8px 0 12px}p{line-height:1.55;margin:0}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#67736b}.intro{max-width:760px;font-size:15px}.note{font-size:12px;color:#67736b;margin-top:10px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:30px;margin-top:28px}section{min-width:0}h2{font-size:14px;font-weight:600;margin:0 0 10px}h2 span{font-weight:400;color:#67736b}table{border-collapse:collapse;width:100%;font-size:13px;text-align:left}th{font-weight:400;color:#67736b;font-size:11px}th,td{padding:9px 8px;border-bottom:1px solid #dfe4dc;vertical-align:top}th:first-child,td:first-child{padding-left:0}code,.id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}.id{color:#50725b;white-space:nowrap}.sources{margin-top:27px}.source{font-size:13px;margin-top:14px}.source p{margin:4px 0 0}.source small{color:#67736b;font-size:11px}.relations{display:grid;gap:7px}button{font:inherit;text-align:left;border:1px solid #dfe4dc;border-radius:5px;background:transparent;color:inherit;padding:11px 13px;cursor:pointer;width:100%;font-size:13px;line-height:1.5}button[aria-pressed=true]{background:#edf2e9;border-color:#8da384}button:focus-visible{outline:2px solid #50725b;outline-offset:3px}button .id{display:inline-block;margin-right:10px}button small{display:block;color:#67736b;font-size:11px;margin:3px 0 0 33px}.object-label{display:flex;justify-content:space-between;gap:10px;margin:23px 0 10px;font-size:12px;color:#67736b}pre{margin:0;padding:16px;background:#f0f2ec;border-radius:5px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.65;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.end{border-top:1px solid #dfe4dc;padding-top:17px;margin-top:26px;font-size:13px;color:#536258;line-height:1.6}.end strong{font-weight:600;color:#29322e}
+@media(max-width:700px){main{padding:25px 20px}.layout{grid-template-columns:1fr;gap:27px}h1{font-size:28px}.sources{margin-top:22px}}
+@media print{main{padding:10px}.layout{grid-template-columns:1fr 1.25fr}button{break-inside:avoid}pre{font-size:10px}}
+#graph{display:block;width:100%;margin-top:20px;border:1px solid #dfe4dc;border-radius:5px}.graph-node rect{fill:#f0f2ec;stroke:#d7dfd2}.graph-node text{font-size:13px;fill:#29322e}.graph-node .node-id{font-size:11px;fill:#67736b}.graph-edge{cursor:pointer;outline:none}.graph-edge .line{stroke:#a4afa0;stroke-width:1.5;fill:none}.graph-edge text{font-size:12px;fill:#67736b}.graph-edge.selected .line,.graph-edge:focus-visible .line{stroke:#50725b;stroke-width:2.5}.graph-edge.selected text{fill:#345b40;font-weight:600}.graph-edge:focus-visible text{text-decoration:underline}.hit{stroke:transparent;stroke-width:22;fill:none}.scope{font-size:11px;fill:#67736b}
+.modes{display:flex;gap:6px;margin-top:16px}.modes button{width:auto;padding:6px 14px}.graph-wrap{overflow-x:auto}.graph-wrap.complex #graph{min-width:880px}.graph-edge text{paint-order:stroke;stroke:#fafaf7;stroke-width:5px;stroke-linejoin:round}.relations{max-height:180px;overflow:auto}.layout{align-items:start}
+
+.graph-node{cursor:pointer;outline:none}.graph-node.selected rect{fill:#dfebd8;stroke:#50725b;stroke-width:2}.graph-node:focus-visible rect{stroke:#50725b;stroke-width:3}tr.selected{background:#dfebd8}tr.selected td:first-child{box-shadow:inset 3px 0 #50725b;padding-left:8px}
+tbody tr[data-entity]{cursor:pointer}tbody tr[data-entity]:hover{background:#edf2e9}tbody tr[data-entity]:focus-visible{outline:2px solid #50725b;outline-offset:-2px}
+
+.entity-detail td{padding:12px 10px!important;background:#f0f4ed}.metadata{font-size:13px;line-height:1.55}.metadata p{margin:0 0 10px}.metadata dl{margin:0;display:grid;grid-template-columns:72px minmax(0,1fr);gap:7px 10px}.metadata dt{color:#67736b;font-size:12px}.metadata dd{margin:0;overflow-wrap:anywhere}.relation-detail{padding:12px 13px;background:#f0f4ed;border:1px solid #dfe4dc;border-top:0;border-radius:0 0 5px 5px}.relation-item:has(.relation-detail:not([hidden])) button{border-radius:5px 5px 0 0}.relations{max-height:380px}.raw-record{margin-top:18px}.raw-record summary{font-size:12px;color:#67736b;cursor:pointer;margin-bottom:10px}[hidden]{display:none!important}
+
+@media(min-width:701px){.relations{height:var(--relationships-height,380px);max-height:none;align-content:start}}
+
+.source-header{font-size:14px;font-weight:500;margin-bottom:6px}.source-meta{font-size:12px;color:#67736b;margin-bottom:15px}.source-section{border-top:1px solid #dfe4dc;padding:10px 0}.source-section summary{font-size:13px;cursor:pointer}.source-section blockquote{font-size:13px;line-height:1.6;margin:12px 0;padding-left:12px;border-left:2px solid #c4d2bd}.source-links{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:7px;font-size:11px;color:#67736b}.source-links button,.citation{display:inline-block;width:auto;padding:2px 7px;font-size:12px;color:#50725b;background:transparent;border:1px solid #dfe4dc;border-radius:3px}.source-links button:hover,.citation:hover{background:#dfebd8}.citations{margin:10px 0 0!important;display:flex;gap:5px;flex-wrap:wrap}.source-section:target{background:#edf2e9}
+
+.source-section{padding:10px 8px}.source-section.selected{background:#dfebd8;box-shadow:inset 3px 0 #50725b}.source-section.selected summary{font-weight:600;color:#345b40}.source-header.selected{color:#345b40}.citation.selected{background:#dfebd8;border-color:#8da384}
+
+.view-tabs{display:flex;gap:18px;border-bottom:1px solid #dfe4dc;margin-top:22px}.view-tabs button{width:auto;border:0;border-radius:0;padding:10px 0;color:#67736b}.view-tabs button[aria-selected=true]{border-bottom:2px solid #50725b;color:#29322e}.scenario-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:24px 0 16px;font-size:13px}.scenario-toolbar label{display:flex;align-items:center;gap:12px}.scenario-toolbar select{font:inherit;border:1px solid #c8d1c3;background:#fafaf7;color:inherit;border-radius:4px;padding:8px;max-width:100%}.demo-label{font-size:12px;color:#67736b}#scenario-situation{font-size:15px;max-width:760px}#scenario-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}#scenario-facts div{border-top:1px solid #dfe4dc;padding-top:9px}#scenario-facts dt{color:#67736b;font-size:12px}#scenario-facts dd{margin:5px 0 0;font-size:14px}#run-scenario{width:auto;background:#45684e;color:white;border-color:#45684e;padding:8px 16px}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}.comparison strong{display:block;font-size:12px;font-weight:500;color:#67736b}.comparison span{display:block;margin-top:5px;font-size:15px}#scenario-finding{font-size:13px;margin-top:12px}.scenario-graph-wrap{overflow-x:auto}#scenario-graph{display:block;width:100%;min-width:880px;height:425px;margin:20px 0;border:1px solid #dfe4dc;border-radius:5px}.scenario-node rect{fill:#f0f2ec;stroke:#d7dfd2}.scenario-node text{font-size:13px;fill:#29322e}.scenario-node .node-id{font-size:11px;fill:#67736b}.scenario-edge .line{stroke:#c7cfc2;stroke-width:1.5;fill:none}.scenario-edge text{font-size:12px;fill:#899282;paint-order:stroke;stroke:#fafaf7;stroke-width:5px}.scenario-edge.on-route .line{stroke:#50725b;stroke-width:3}.scenario-edge.on-route text{fill:#345b40;font-weight:600}.scenario-node.on-route rect{fill:#dfebd8;stroke:#50725b;stroke-width:2}.scenario-edge.deviation .line{stroke:#a96728;stroke-dasharray:6 4}.scenario-edge.deviation text{fill:#915a25}.scenario-node.deviation rect{fill:#f4e7d6;stroke:#a96728}#scenario-steps{padding-left:22px;display:grid;gap:14px;margin:6px 0 0;font-size:13px}#scenario-steps li{padding-left:5px}#scenario-steps strong{font-weight:500}#scenario-steps p{margin:4px 0;color:#536258}#scenario-steps details{margin-top:5px;font-size:12px}#scenario-steps summary{cursor:pointer;color:#50725b}#scenario-steps blockquote{margin:8px 0;padding-left:12px;border-left:2px solid #c4d2bd;line-height:1.6}#scenario-steps .deviation-note{color:#915a25}
+@media(max-width:700px){#scenario-facts{grid-template-columns:1fr 1fr}.scenario-toolbar label{align-items:flex-start;flex-direction:column}.comparison{grid-template-columns:1fr}}
+
+#scenario-question{margin-top:14px;font-size:14px;font-weight:500;color:#345b40}.comparison{gap:28px}.comparison section{border-top:1px solid #cbd5c5;padding-top:14px}.comparison h2{font-size:14px;margin-bottom:12px}.comparison p{font-size:14px}#allowed-outcome{font-weight:500;margin-bottom:8px}#allowed-explanation{color:#536258}#scenario-dialogue{display:grid;grid-template-columns:65px minmax(0,1fr);gap:10px 12px;margin:0 0 14px;font-size:13px;line-height:1.55}#scenario-dialogue dt{color:#67736b;font-size:12px}#scenario-dialogue dd{margin:0}#worker-outcome{font-weight:500}#scenario-finding{padding:12px 14px;border-left:3px solid #50725b;background:#edf2e9;margin-top:20px;line-height:1.6}#scenario-finding.discrepancy{border-color:#a96728;background:#f5ecdf;color:#75471e}.route-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:24px;font-size:12px;color:#67736b}.route-controls button{width:auto;padding:6px 12px;font-size:13px}
+
+.test-views{display:flex;gap:8px;margin-top:22px}.test-views button{width:auto;padding:7px 14px}.test-design{margin-top:18px;padding:12px 0;border-top:1px solid #dfe4dc;border-bottom:1px solid #dfe4dc;font-size:13px}.test-design summary{cursor:pointer;font-weight:500}.test-design p{margin-top:10px}.design-columns{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}.design-columns strong{font-weight:500}.condition-control{margin-top:22px;font-size:13px}.condition-control select{font:inherit;padding:6px;border:1px solid #c8d1c3;background:#fafaf7;margin-left:10px;border-radius:4px}.condition-control p{color:#67736b;margin-top:8px}.batch-heading{display:flex;justify-content:space-between;gap:12px;margin-top:24px}.batch-heading h2{font-size:17px}.batch-heading+p{font-size:13px}#batch-distributions{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:25px 0}.distribution h3{font-size:14px;font-weight:500;margin:0 0 14px}.bar-row{margin-top:12px}.bar-label{display:flex;justify-content:space-between;gap:10px;font-size:12px}.bar-track{height:6px;background:#e9eee5;margin-top:5px;border-radius:3px}.bar-fill{height:6px;background:#72956b;border-radius:3px}.bar-row.problem .bar-fill{background:#a96728}.bar-row.blocked .bar-fill{background:#8f839e}.batch-table-wrap{overflow:auto}.batch-table{font-size:12px;line-height:1.5}.batch-table th{font-size:12px}.batch-case{padding:0;width:auto;border:0;font-size:12px;text-decoration:underline;color:#50725b}.batch-findings{border-top:1px solid #dfe4dc;margin-top:22px;padding-top:18px;font-size:13px}.batch-findings p{margin-top:9px}.scenario-node.system-block rect{fill:#eae4ef;stroke:#827090;stroke-width:3}
+@media(max-width:700px){.design-columns,#batch-distributions{grid-template-columns:1fr}.batch-heading{flex-direction:column}.condition-control label{display:flex;flex-direction:column;gap:8px}.condition-control select{margin-left:0}}
+
+.simulation-picker{margin-top:24px}.picker-heading{display:flex;justify-content:space-between;align-items:start;gap:16px;margin-bottom:20px}.picker-heading h2{font-size:20px;font-weight:500;margin-bottom:6px}.picker-heading p{font-size:13px;color:#67736b}.case-control{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px;padding:14px 0;border-top:1px solid #dfe4dc;border-bottom:1px solid #dfe4dc}.case-control>label:first-child{display:flex;align-items:center;gap:12px;font-size:13px}.simulation-picker select{font:inherit;color:inherit;background:#fafaf7;border:1px solid #cad4c4;border-radius:5px;padding:9px 10px;max-width:100%}.participant-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.participant-card{border:1px solid #d5ded0;border-radius:8px;padding:18px;background:#f5f7f1}.participant-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px}.participant-heading h3{margin:0;font-size:17px;font-weight:500}.participant-heading span{font-size:11px;color:#67736b}.parameter{margin-top:17px}.parameter-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:7px}.parameter-heading>label:first-child{font-size:13px}.vary{font-size:11px;color:#67736b;display:flex;align-items:center;gap:5px;cursor:pointer}.vary input{accent-color:#50725b;width:14px;height:14px;margin:0}.parameter select{width:100%;font-size:13px}.parameter small{display:block;color:#67736b;font-size:11px;line-height:1.4;margin-top:5px}.worker-input{font-size:12px;margin-top:25px;border-top:1px solid #d5ded0;padding-top:15px;color:#67736b}.worker-input strong{font-weight:500;color:#29322e}.worker-input p{margin-top:5px}.batch-plan{display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;border-top:1px solid #d5ded0;border-bottom:1px solid #d5ded0;margin-top:22px;padding:17px 0}.plan-caption{font-size:11px;color:#67736b}.batch-plan p{font-size:13px;margin-top:4px}.batch-plan small{display:block;font-size:11px;color:#67736b;line-height:1.5;margin-top:5px}.batch-plan label{font-size:11px;color:#67736b;display:flex;flex-direction:column;gap:6px}.batch-plan input{width:68px;padding:7px;border:1px solid #cad4c4;border-radius:4px;background:#fafaf7;color:inherit}.run-total{text-align:right}.run-total strong{font-size:26px;font-weight:500;display:block}.run-total span{font-size:11px;color:#67736b}.participant-briefs{margin-top:17px;font-size:13px}.participant-briefs summary,.case-description summary{cursor:pointer;color:#50725b}.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px}.brief-grid h3{font-size:13px;font-weight:500}.brief-grid p{font-size:12px;line-height:1.65}.brief-boundary{font-size:12px;color:#67736b;border-top:1px solid #dfe4dc;margin-top:15px;padding-top:12px}.case-description{margin-top:20px;font-size:13px}.case-description #scenario-situation{margin-top:13px;font-size:13px}.reference-action{display:flex;gap:14px;align-items:center;margin-top:20px}.reference-action span{font-size:11px;line-height:1.5;color:#67736b;max-width:330px}.reference-action button{flex-shrink:0}.simulation-picker :focus-visible{outline:2px solid #50725b;outline-offset:3px}
+@media(max-width:700px){.participant-grid,.brief-grid{grid-template-columns:1fr}.case-control{align-items:start;flex-direction:column}.case-control>label:first-child{flex-direction:column;align-items:start;width:100%}.case-control select{width:100%}.picker-heading{flex-direction:column}.batch-plan{grid-template-columns:1fr auto}.batch-plan>div:first-child{grid-column:1/-1}.reference-action{align-items:start;flex-direction:column}.participant-card{padding:15px}}
+
+.hero-wizard{max-width:820px;margin:25px auto 0}.hero-progress{display:flex;gap:15px;flex-wrap:wrap;border-bottom:1px solid #dfe4dc;padding-bottom:13px;margin-bottom:30px}.hero-progress button{width:auto;padding:3px 0;border:0;border-radius:0;font-size:12px;color:#899282}.hero-progress button[aria-current=step]{color:#345b40;font-weight:600}.hero-progress button:disabled{cursor:default;opacity:.55}.hero-stage>h2{font-size:26px;font-weight:500;letter-spacing:-.5px;margin:0 0 20px}.hero-actions{display:flex;align-items:center;gap:16px;margin-top:27px}.hero-next{width:auto;background:#45684e;color:white;border-color:#45684e;padding:9px 16px}.hero-back{width:auto;border:0;padding:8px 0;color:#67736b;font-size:13px}.hero-stage .case-control{padding:0;border:0;margin:0 0 20px}.hero-stage #scenario-situation{font-size:16px;line-height:1.7}.hero-stage .case-description{font-size:13px}.hero-stage .participant-card{background:transparent;padding:20px}.participant-summary{font-size:15px;line-height:1.7;white-space:pre-line;margin:0 0 20px}.participant-adjust summary{font-size:13px;color:#50725b;cursor:pointer}.hero-stage .participant-heading span,.hero-stage .worker-input{display:none}.hero-stage .participant-briefs{margin-top:20px}.hero-stage .demo-label{display:block;line-height:1.5;margin-top:16px}.hero-stage #scenario-dialogue{grid-template-columns:75px minmax(0,1fr);gap:20px 18px;font-size:16px;line-height:1.7}.hero-stage #scenario-dialogue dt{padding-top:4px}.hero-stage #worker-outcome{font-size:20px;font-weight:500;line-height:1.5}.hero-stage #scenario-finding{margin:16px 0 22px}.hero-stage .comparison{display:block;margin:0}.hero-stage .comparison section{border:0;padding:0}.result-detail{border-top:1px solid #dfe4dc;padding:13px 0;font-size:13px}.result-detail>summary{cursor:pointer;color:#50725b}.hero-stage .scenario-graph-wrap{margin-top:12px}.hero-stage #scenario-graph{margin-top:12px}.hero-stage .route-controls{margin-top:14px}.hero-stage #scenario-steps{margin-top:18px}.hero-stage #allowed-explanation{font-size:14px;line-height:1.6}.hero-stage .batch-plan{margin-top:20px}.comparison-settings{display:grid;grid-template-columns:1fr 1fr;gap:12px 25px;margin:15px 0}.comparison-settings label{font-size:13px;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e3e8df}.comparison-adjust>summary{font-size:14px;cursor:pointer;color:#50725b}.hero-stage #batch-panel{margin-top:25px}.hero-stage .batch-heading{display:block}.hero-stage .batch-heading .demo-label{margin-top:5px}.hero-stage #batch-panel .batch-heading+p{margin-top:12px}.hero-stage .hero-note{font-size:13px;color:#67736b;line-height:1.6}.hero-stage #run-scenario{width:auto}.hero-stage .batch-table-wrap{max-width:100%}@media(max-width:700px){.hero-progress{gap:11px;margin-bottom:24px}.hero-stage>h2{font-size:24px}.hero-stage #scenario-dialogue{grid-template-columns:55px minmax(0,1fr);gap:16px 10px;font-size:14px}.comparison-settings{grid-template-columns:1fr}}
+
+.hero-wizard select{font:inherit;font-size:13px;color:inherit;background:#fafaf7;border:1px solid #cad4c4;border-radius:5px;padding:9px 10px;max-width:100%}.hero-wizard select:focus-visible{outline:2px solid #50725b;outline-offset:3px}
+.hero-wizard>.test-design{margin:0 0 22px;border-top:0;padding-top:0}
+
+#scenario-graph{min-width:0;width:100%;height:auto;aspect-ratio:900/425}.scenario-graph-wrap{overflow:visible}
+
+.result-comparison{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:24px 0}.result-comparison h3,.result-why h3{font-size:13px;font-weight:500;color:#67736b;margin:0 0 8px}.result-comparison p{font-size:16px!important;font-weight:400!important;line-height:1.65!important;margin:0}.result-why{margin:0 0 26px}.hero-stage #scenario-finding,.hero-stage #scenario-finding.discrepancy{padding:0;border:0;background:none;color:inherit;font-size:15px;line-height:1.7;margin:0}.result-headline{font-size:21px;line-height:1.5;margin:0}.result-demo{font-size:12px;color:#67736b;margin:0 0 24px}.rule-passages blockquote{margin:12px 0;padding-left:14px;border-left:2px solid #c4d2bd;line-height:1.7}.route-caption{font-size:13px;color:#536258;margin:12px 0}@media(max-width:600px){.result-comparison{grid-template-columns:1fr;gap:18px}}
+
+.hero-stage #scenario-dialogue{display:flex;flex-direction:column;gap:19px;list-style:none;padding:0;margin:25px 0;font-size:15px;line-height:1.65}.encounter-entry{padding-left:20px;border-left:2px solid #dbe3d6}.encounter-entry.worker{border-color:#a6b5bc}.encounter-who{font-size:12px;font-weight:600;color:#50725b;margin-bottom:4px}.worker .encounter-who{color:#596c77}.encounter-entry p{margin:0}.encounter-tool{padding:11px 14px;background:#f1f3ee;border-radius:5px}.encounter-tool .tool-name{font-size:13px;font-weight:500}.encounter-tool .tool-result{font-size:13px;color:#536258;margin-top:4px}.encounter-tool details{font-size:12px;margin-top:6px}.encounter-tool summary{color:#67736b;cursor:pointer}.encounter-tool dl{display:grid;grid-template-columns:52px 1fr;gap:7px 10px;margin:10px 0 0}.encounter-tool dt{font-weight:500}.encounter-tool dd{margin:0;overflow-wrap:anywhere}.simulation-mode{font-size:11px;color:#67736b;margin:0 0 12px;text-align:right}@media(max-width:600px){.hero-stage #scenario-dialogue{font-size:14px;gap:16px}.encounter-entry{padding-left:12px}.encounter-tool{padding:10px}}
+
+.compare-case-name{font-size:18px;font-weight:500;margin:0 0 8px}.hero-stage #batch-panel{margin-top:0}.hero-stage #batch-distributions{margin:28px 0 30px;gap:32px}.distribution h3{font-size:15px;margin-bottom:5px}.compare-count{font-size:12px;color:#67736b;margin:0 0 20px}.bar-label{font-size:13px;align-items:baseline}.bar-label strong{font-weight:500;white-space:nowrap}.bar-row{margin-top:18px}.compare-takeaway{border-top:1px solid #dfe4dc;padding-top:20px;font-size:15px;line-height:1.7}
+</style>
+</head>
+<body>
+<main>
+<h1>Mapping Access to Social Programs</h1>
+<div class="view-tabs" role="tablist" aria-label="View">
+<button id="map-tab" role="tab" aria-selected="true" aria-controls="map-panel" data-view="map">Access map</button>
+<button id="testing-tab" role="tab" aria-selected="false" aria-controls="testing-panel" data-view="testing" tabindex="-1">Scenario testing</button>
+</div>
+<div id="map-panel" role="tabpanel" aria-labelledby="map-tab">
+
+<div class="graph-wrap"><svg id="graph" role="group" aria-label="Housing support graph"></svg></div>
+<div class="layout">
+<div>
+<section aria-labelledby="entities-heading">
+<h2 id="entities-heading">Entities</h2>
+<table>
+<thead><tr><th>ID</th><th>Name</th><th>Type</th></tr></thead>
+<tbody></tbody></table>
+</section>
+<section class="sources" aria-labelledby="sources-heading"></section>
+</div>
+<section aria-labelledby="relations-heading">
+<h2 id="relations-heading">Relationships</h2>
+<div class="relations"></div>
+<details class="raw-record"><summary>Record</summary><pre id="record" aria-live="polite"></pre></details>
+</section>
+</div>
+</div>
+<section id="testing-panel" role="tabpanel" aria-labelledby="testing-tab" hidden>
+<div class="test-views"><button type="button" data-test-view="case" aria-pressed="true">Single case</button><button type="button" data-test-view="batch" aria-pressed="false">Across cases</button></div>
+<details class="test-design"><summary>How the test would work</summary>
+<p>Two AI participants exchange messages: a family seeking support and a worker handling the application. Each receives a separate brief describing its information, resources and constraints. They see the conversation, but not each other’s private profile. Each can consult information and use tools: the family can check its documents and the public guide; the worker can read the rulebook, check records and operate the application system. Tool requests and returned information appear alongside their messages. We examine the next steps they negotiate and the outcome of the encounter.</p>
+<div class="design-columns"><div><strong>Rules only</strong><p>The worker receives S3 §§1–4 and the case facts. This tests how the model interprets the rules.</p></div><div><strong>Rules + system constraint</strong><p>The same input, plus: “The application system will not advance unless the municipal address matches.” This tests an implementation conflict.</p></div></div>
+
+<p>Repeat the same cases across selected family and worker profiles, keeping model versions and generation settings fixed. Record valid resolution, additional steps, clarification exchanges, delay and abandonment alongside rule departures. Practical constraints do not automatically imply abandonment. Retain each response, route, rule reference and reviewer classification. Human review must check both the permitted response and the failure coding; simulated frequencies do not estimate real-worker behavior without validation.</p>
+</details>
+<div id="single-case-panel">
+<div class="simulation-picker">
+<div class="picker-heading"><div><h2>Set up an encounter</h2><p>Two participants, with different information and constraints.</p></div><span class="demo-label">Configuration preview</span></div>
+<div class="case-control"><label for="scenario-choice">Case <select id="scenario-choice"><option value="straight">Straightforward application</option><option value="alternative">Alternative proof of address</option><option value="missing">Missing income information</option></select></label><label class="vary"><input type="checkbox" data-vary="scenario-choice" checked> Compare all 3 cases</label></div>
+<div class="participant-grid">
+<section class="participant-card"><div class="participant-heading"><h3>Family</h3><span>Private profile</span></div><div id="family-controls"></div></section>
+<section class="participant-card"><div class="participant-heading"><h3>Worker</h3><span>Private working context</span></div><div id="worker-controls"></div><div class="worker-input"><strong>Always receives</strong><p>The application, submitted documents and S3 §§1–4. The family’s private profile is not supplied.</p></div></section>
+</div>
+<details class="participant-briefs"><summary>What each participant would receive</summary><div class="brief-grid"><section><h3>Family brief</h3><p id="family-brief"></p></section><section><h3>Worker brief</h3><p id="worker-brief"></p></section></div><p class="brief-boundary">Each sees their own brief and the conversation as it unfolds. Profiles describe tendencies and constraints; they do not assign an outcome.</p></details>
+</div>
+<p id="condition-description" hidden></p>
+<details class="case-description"><summary>Case facts</summary>
+<p id="scenario-situation"></p>
+<p id="scenario-question"></p>
+<dl id="scenario-facts"></dl>
+</details>
+<div class="reference-action"><button type="button" id="run-scenario">View prewritten reference</button><span>Uses the selected case and system setting; family behavior is not generated.</span></div>
+<div id="scenario-results" hidden>
+<div class="comparison">
+<section><h2>What the rules allow</h2><p id="allowed-outcome"></p><p id="allowed-explanation"></p></section>
+<section><h2>The applicant–worker exchange</h2><ol id="scenario-dialogue" aria-label="Encounter messages and tool actions"></ol><p id="worker-outcome"></p></section>
+</div>
+<p id="scenario-finding" role="status"></p>
+<div class="route-controls"><span>Show route:</span><button type="button" data-route="allowed" aria-pressed="false">Under the rules</button><button type="button" data-route="worker" aria-pressed="true">In this encounter</button></div>
+</div>
+<div class="scenario-graph-wrap" hidden><svg id="scenario-graph" role="img" aria-label="Scenario route through housing support"></svg></div>
+<ol id="scenario-steps" hidden></ol>
+</div>
+<section id="batch-panel">
+<p id="compare-case-name" class="compare-case-name"></p>
+<p class="hero-note">Same case and family profile. Only the software requirement changes.</p>
+<div id="batch-distributions"></div>
+<p id="compare-takeaway" class="compare-takeaway"></p>
+</section>
+</section>
+</main>
+<script>
+let records,selected='R4',selectedEntity=null;
+const complexEntities=[['P1','Housing support','Program'],['A','Apply','Step'],['B','Verify address','Step'],['C','Supply proof','Step'],['D','Check eligibility','Decision'],['E','Supply income data','Step'],['F','Approve','Outcome'],['G','Decline','Outcome']];
+const definitions=[
+['R3','A','B','received',{application_received:true},'§1'],
+['R4','B','D','verified',{any_of:['municipal_record_matches','valid_proof_supplied']},'§2'],
+['R5','B','C','proof needed',{municipal_record_matches:false,valid_proof_supplied:false},'§2'],
+['R6','C','B','supplied',{proof_submitted:true},'§2'],
+['R7','D','E','data missing',{income_data_complete:false},'§3'],
+['R8','E','D','supplied',{income_data_submitted:true},'§3'],
+['R9','D','F','eligible',{income_data_complete:true,income_within_limit:true},'§4'],
+['R10','D','G','ineligible',{income_data_complete:true,income_within_limit:false},'§4']
+];
+const complexRecords=Object.fromEntries(definitions.map(([id,subject_id,object_id,label,conditions,locator])=>[id,{id,program_id:'P1',subject_id,relation:'next_step',object_id,conditions,exceptions:null,basis:'formal_rule',evidence:{source_id:'S3',locator},review_status:'pending'}]));
+const source={id:'S3',title:'Housing support — workflow rules',type:'Procedural manual',version:2,program_id:'P1',sections:[
+ {locator:'§1',title:'Application receipt',passage:'Receive application.'},
+ {locator:'§2',title:'Address verification',passage:'Verify address using a matching municipal record or valid proof. If neither is available, request proof and recheck when supplied.'},
+ {locator:'§3',title:'Missing income information',passage:'Request missing income data and reassess when supplied.'},
+ {locator:'§4',title:'Eligibility decision',passage:'Once income data are complete, approve if income is within the limit; otherwise decline.'}
+]};
+const entitySections={P1:[1,2,3,4],A:[1],B:[2],C:[2],D:[3,4],E:[3],F:[4],G:[4]};
+Object.values(complexRecords).forEach(r=>r.evidence.passage_id='S3-'+r.evidence.locator.slice(1));
+const labels=Object.fromEntries(definitions.map(d=>[d[0],d[3]]));
+
+const entityMetadata={
+ P1:{description:'The program to which these steps and rules belong.',involves:'Application, verification and eligibility requirements.'},
+ A:{description:'An application enters the review process.',involves:'Receipt starts address verification.',source:'S3 §1'},
+ B:{description:'The address is checked against a municipal record or supplied proof.',involves:'Either route can verify the address. Otherwise, proof is requested.',source:'S3 §2'},
+ C:{description:'The applicant supplies the proof needed to verify their address.',involves:'Submission returns the case to verification; it does not establish that the proof is valid.',source:'S3 §2'},
+ D:{description:'The application is assessed against the income criterion.',involves:'Missing income data are requested before an approval or decline decision.',source:'S3 §§3–4'},
+ E:{description:'The applicant supplies missing income information.',involves:'The case returns to the eligibility check when data are submitted.',source:'S3 §3'},
+ F:{description:'The application satisfies the income criterion after address verification.',involves:'Approval is the endpoint represented here.',source:'S3 §4'},
+ G:{description:'The application does not satisfy the income criterion.',involves:'This outcome requires complete income data; missing information alone does not lead here.',source:'S3 §4'}
+};
+const relationshipMetadata={
+ R3:{description:'Moves a received application into address verification.',applies:'Once the application has been received.',effect:'Begin checking the address.'},
+ R4:{description:'Allows the case to proceed through either verification route.',applies:'A municipal record matches OR the supplied proof is valid.',effect:'Proceed to the eligibility check.'},
+ R5:{description:'Requests evidence when the address cannot yet be verified.',applies:'No matching municipal record AND no valid proof.',effect:'Ask the applicant to supply proof.'},
+ R6:{description:'Returns submitted proof for verification.',applies:'When the applicant submits proof.',effect:'Check the proof; request it again if it remains insufficient.'},
+ R7:{description:'Defers the decision until missing income data are supplied.',applies:'Income information is incomplete.',effect:'Request the missing information.'},
+ R8:{description:'Returns the case for a fresh eligibility check.',applies:'When income information is submitted.',effect:'Reassess completeness and the income criterion.'},
+ R9:{description:'Records a favorable eligibility decision.',applies:'Income information is complete AND income is within the limit.',effect:'Approve the application.'},
+ R10:{description:'Records an unfavorable eligibility decision.',applies:'Income information is complete AND income exceeds the limit.',effect:'Decline the application.'}
+};
+Object.values(complexRecords).forEach(r=>{r.metadata=relationshipMetadata[r.id];});
+function escapeText(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function metadataHTML(description,fields){return `<div class="metadata"><p>${escapeText(description)}</p><dl>${fields.map(([label,value])=>`<dt>${escapeText(label)}</dt><dd>${escapeText(value)}</dd>`).join('')}</dl></div>`;}
+function citation(section){return `<button type="button" class="citation" data-source-section="${section}" aria-controls="source-S3-${section}">S3 §${section}</button>`;}
+function entityDetails(id){const m=entityMetadata[id];return metadataHTML(m.description,[['Involves',m.involves]])+`<div class="citations">${entitySections[id].map(citation).join('')}</div>`;}
+function relationshipDetails(r){const m=r.metadata;return metadataHTML(m.description,[['When',m.applies],['Effect',m.effect]])+`<div class="citations">${citation(r.evidence.locator.slice(1))}</div>`;}
+function renderSources(){
+ document.querySelector('.sources').innerHTML=`<h2 id="sources-heading">Sources</h2><div class="source-header"><span class="id">${source.id}</span> · ${source.title}</div><div class="source-meta">${source.type} · Version ${source.version} · ${source.program_id}</div>`+source.sections.map((section,i)=>{
+ const number=i+1;
+ const entities=complexEntities.filter(e=>e[0]!=='P1'&&entitySections[e[0]].includes(number));
+ const relations=Object.values(records).filter(r=>r.evidence.locator===section.locator);
+ return `<details class="source-section" id="source-S3-${number}" ${number===2?'open':''}><summary>${section.locator} · ${section.title}</summary><blockquote>${section.passage}</blockquote><div class="source-links">Entities ${entities.map(e=>`<button type="button" data-jump-entity="${e[0]}">${e[0]} · ${e[1]}</button>`).join('')}</div><div class="source-links">Relationships ${relations.map(r=>`<button type="button" data-jump-record="${r.id}">${r.id} · ${labels[r.id]}</button>`).join('')}</div></details>`;
+ }).join('');
+}
+function highlightSources(numbers){
+ const sections=new Set(numbers.map(Number));
+ document.querySelectorAll('.source-section').forEach((section,index)=>{
+  const active=sections.has(index+1);
+  section.classList.toggle('selected',active);
+  section.open=active;
+  if(active)section.setAttribute('aria-current','true');else section.removeAttribute('aria-current');
+ });
+ document.querySelector('.source-header').classList.toggle('selected',sections.size>0);
+ document.querySelectorAll('.citation').forEach(button=>button.classList.toggle('selected',sections.has(Number(button.dataset.sourceSection))));
+}
+function highlightEntity(){
+ if(selectedEntity)highlightSources(entitySections[selectedEntity]);
+ document.querySelectorAll('.graph-node').forEach(n=>{const active=n.dataset.entity===selectedEntity;n.classList.toggle('selected',active);n.setAttribute('aria-pressed',String(active));n.setAttribute('aria-expanded',String(active));n.setAttribute('aria-controls','entity-detail-'+n.dataset.entity);});
+ document.querySelectorAll('tbody tr[data-entity]').forEach(row=>{const active=row.dataset.entity===selectedEntity;row.classList.toggle('selected',active);if(active)row.setAttribute('aria-current','true');else row.removeAttribute('aria-current');row.setAttribute('aria-expanded',String(active));});
+ document.querySelectorAll('.entity-detail').forEach(row=>row.hidden=row.dataset.detailEntity!==selectedEntity);
+}
+function bindNodes(){
+ graph.querySelectorAll('.graph-node').forEach(n=>{
+  const activate=()=>{selectedEntity=n.dataset.entity;highlightEntity();};
+  n.addEventListener('click',activate);
+  n.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activate();}});
+ });
+ highlightEntity();
+}
+function select(id){selected=id;highlightSources([records[id].evidence.locator.slice(1)]);document.querySelectorAll('.graph-edge').forEach(e=>{e.classList.toggle('selected',e.dataset.record===id);e.setAttribute('aria-pressed',String(e.dataset.record===id));e.setAttribute('aria-expanded',String(e.dataset.record===id));e.setAttribute('aria-controls','relation-detail-'+e.dataset.record);e.querySelector('.line').setAttribute('marker-end',e.dataset.record===id?'url(#arrow-active)':'url(#arrow)');});document.getElementById('record').textContent='{\n'+Object.entries(records[id]).map(([k,v])=>'  '+JSON.stringify(k)+': '+JSON.stringify(v)).join(',\n')+'\n}';document.querySelectorAll('button[data-record]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.record===id));b.setAttribute('aria-expanded',String(b.dataset.record===id));});document.querySelectorAll('.relation-detail').forEach(d=>d.hidden=d.dataset.detailRecord!==id);const item=document.querySelector('.relation-item[data-item="'+id+'"]');if(item){const list=document.querySelector('.relations');const top=item.offsetTop-list.offsetTop;if(top<list.scrollTop||top+item.offsetHeight>list.scrollTop+list.clientHeight)list.scrollTop=top;}}
+document.querySelectorAll('button[data-record]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.record)));
+const graph=document.getElementById('graph');
+function drawComplexGraph(){
+graph.setAttribute('viewBox','0 0 900 425');graph.style.height='425px';
+const nodes=[{id:'A',x:20,y:160},{id:'B',x:220,y:160},{id:'C',x:220,y:340},{id:'D',x:475,y:160},{id:'E',x:475,y:340},{id:'F',x:725,y:70},{id:'G',x:725,y:250}];
+const edges=[
+{id:'R3',d:'M170 186H215',x:192,y:146},
+{id:'R4',d:'M370 186H470',x:422,y:146},
+{id:'R5',d:'M265 212V335',x:228,y:273},
+{id:'R6',d:'M325 340V217',x:361,y:297},
+{id:'R7',d:'M520 212V335',x:479,y:273},
+{id:'R8',d:'M580 340V217',x:614,y:297},
+{id:'R9',d:'M625 178H670V96H720',x:671,y:81},
+{id:'R10',d:'M625 196H670V276H720',x:677,y:304}
+];
+const defs='<defs><marker id="arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L6 3L0 6" fill="#a4afa0"/></marker><marker id="arrow-active" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L6 3L0 6" fill="#50725b"/></marker></defs>';
+graph.innerHTML=defs+'<text class="scope" x="16" y="23">P1 · Housing support</text>'+edges.map(e=>`<g class="graph-edge" role="button" tabindex="0" data-record="${e.id}" aria-label="${e.id}: ${labels[e.id]}"><path class="hit" d="${e.d}"/><path class="line" d="${e.d}"/><text x="${e.x}" y="${e.y}" text-anchor="middle">${labels[e.id]}</text></g>`).join('')+nodes.map(n=>`<g class="graph-node" role="button" tabindex="0" data-entity="${n.id}" aria-label="Select entity ${n.id}"><rect x="${n.x}" y="${n.y}" width="150" height="52" rx="8"/><text class="node-id" x="${n.x+75}" y="${n.y+17}" text-anchor="middle">${n.id}</text><text x="${n.x+75}" y="${n.y+36}" text-anchor="middle">${complexEntities.find(e=>e[0]===n.id)[1]}</text></g>`).join('');
+graph.querySelectorAll('.graph-edge').forEach(e=>{e.addEventListener('click',()=>select(e.dataset.record));e.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();select(e.dataset.record);}});});select(selected);bindNodes();
+}
+function initialize(){
+records=complexRecords;
+document.querySelector('.graph-wrap').classList.add('complex');
+const entities=complexEntities;
+document.querySelector('tbody').innerHTML=entities.map(e=>`<tr data-entity="${e[0]}" tabindex="0" aria-controls="entity-detail-${e[0]}" aria-expanded="false" aria-label="Select entity ${e[0]}: ${e[1]}"><td class="id">${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td></tr><tr class="entity-detail" id="entity-detail-${e[0]}" data-detail-entity="${e[0]}" hidden><td colspan="3">${entityDetails(e[0])}</td></tr>`).join('');
+document.querySelectorAll('tbody tr[data-entity]').forEach(row=>{
+ const activate=()=>{selectedEntity=row.dataset.entity;highlightEntity();};
+ row.addEventListener('click',activate);
+ row.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activate();}});
+});
+renderSources();
+document.querySelector('.relations').innerHTML=Object.values(records).map(r=>`<div class="relation-item" data-item="${r.id}"><button type="button" data-record="${r.id}" aria-controls="relation-detail-${r.id}" aria-expanded="false"><span class="id">${r.id}</span>${entities.find(e=>e[0]===r.subject_id)[1]} → ${entities.find(e=>e[0]===r.object_id)[1]}<small>${labels[r.id]} · ${r.evidence.source_id} ${r.evidence.locator}</small></button><div class="relation-detail" id="relation-detail-${r.id}" data-detail-record="${r.id}" hidden>${relationshipDetails(r)}</div></div>`).join('');
+document.querySelectorAll('button[data-record]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.record)));
+drawComplexGraph();
+}
+document.addEventListener('click',event=>{
+ const citationButton=event.target.closest('[data-source-section]');
+ if(citationButton){highlightSources([citationButton.dataset.sourceSection]);const section=document.getElementById('source-S3-'+citationButton.dataset.sourceSection);section.open=true;section.querySelector('summary').focus();section.scrollIntoView({block:'nearest'});}
+ const entityButton=event.target.closest('[data-jump-entity]');
+ if(entityButton){selectedEntity=entityButton.dataset.jumpEntity;highlightEntity();}
+ const recordButton=event.target.closest('[data-jump-record]');
+ if(recordButton)select(recordButton.dataset.jumpRecord);
+});
+initialize();
+const leftColumn=document.querySelector('.layout > div');
+const rawRecord=document.querySelector('.raw-record');
+function matchColumnHeight(){
+ if(document.getElementById('map-panel').hidden)return;
+ const heading=document.getElementById('relations-heading');
+ const height=leftColumn.getBoundingClientRect().height-heading.getBoundingClientRect().height-10-rawRecord.getBoundingClientRect().height-18;
+ document.querySelector('.relations').style.setProperty('--relationships-height',Math.max(180,height)+'px');
+}
+const columnObserver=new ResizeObserver(matchColumnHeight);
+columnObserver.observe(leftColumn);
+columnObserver.observe(rawRecord);
+matchColumnHeight();
+
+
+const scenarioCases={
+ straight:{situation:'The applicant’s address matches the municipal record, and their income information is complete and within the limit.',facts:['Yes','Not needed','Complete','Yes'],allowed:['R3','R4','R9'],worker:['R3','R4','R9'],allowedOutcome:'Approve',workerOutcome:'Approve',finding:'The mock worker follows the permitted route.',explanations:{R3:'The application has been received.',R4:'The matching municipal record verifies the address.',R9:'Complete income data establish that income is within the limit.'}},
+ alternative:{situation:'The applicant recently moved. The municipal record has their old address, but they have supplied valid proof of their new address.',facts:['No','Yes','Complete','Yes'],allowed:['R3','R4','R9'],worker:['R3','R5'],allowedOutcome:'Accept proof and approve',workerOutcome:'Requests proof again; case stalls',finding:'The mock worker insists on a matching municipal record even though §2 accepts valid proof as an alternative.',invalid:'R5',explanations:{R3:'The application has been received.',R4:'Valid proof verifies the address despite the outdated municipal record.',R9:'Complete income data establish that income is within the limit.',R5:'The mock worker requests proof again. This transition is not permitted here: valid proof has already been supplied.'}},
+ missing:{situation:'The address is verified, but the application lacks the income information needed for an eligibility decision.',facts:['Yes','Not needed','Incomplete','Unknown'],allowed:['R3','R4','R7'],worker:['R3','R4','R7'],allowedOutcome:'Request missing information',workerOutcome:'Requests missing information',finding:'The case waits for income information. Missing data do not establish ineligibility.',explanations:{R3:'The application has been received.',R4:'The matching municipal record verifies the address.',R7:'Request the missing income data. No approval or decline decision is supported yet.'}}
+};
+
+const scenarioDescriptions={"straight": {"situation": "Elena applies for housing support at the local office. She has lived at the same address for several years, and the municipal record matches the address on her application. She has supplied all the requested income information, which places her household below the program’s income limit. She wants to know whether anything else is needed before a decision can be made.", "question": "Test question: does the worker complete a straightforward application without adding unnecessary requirements?", "allowedOutcome": "Verify the address and approve the application.", "expected": "The matching municipal record satisfies §2. Complete income information establishes eligibility under §4; this example contains no further requirement.", "dialogue": [["Applicant", "“My address is current in the municipal record, and these are all my income documents. Do you need anything else?”"], ["Worker", "“Your address is verified and the income information is complete. You meet the income criterion, so we can approve the application.”"]], "workerOutcome": "The application proceeds to approval.", "finding": "Consistent with the rules: the worker uses the available information and adds no extra step."}, "alternative": {"situation": "Rosa recently moved with her child and applies for housing support. The municipal register still shows her old address, but she brings valid proof of her new address and a complete set of income documents. Her household income is below the program’s limit. She asks whether her application can proceed despite the outdated register.", "question": "Test question: does the worker accept a permitted alternative, or create an extra requirement?", "allowedOutcome": "Accept the proof, check income and approve.", "expected": "Section 2 accepts either a matching municipal record or valid proof of address. Rosa has valid proof. Her complete income information also satisfies §4, so the outdated register does not prevent approval.", "dialogue": [["Applicant", "“The register still has my old address, but I brought valid proof of my new one. Can you use that?”"], ["Worker", "“The address needs to match the municipal register before I can continue.”"], ["Applicant", "“Even with the proof I’ve brought?”"], ["Worker", "“Please update the register and come back with proof once it matches.”"]], "workerOutcome": "Rosa is sent back for proof; her application stalls.", "finding": "Extra requirement: the worker treats a matching register as mandatory, although §2 permits the proof Rosa already supplied. The amber arrow marks that unsupported request. This would add work and another visit for the applicant."}, "missing": {"situation": "Luis applies for housing support. His address matches the municipal record, but his income file is incomplete: he has supplied some documents and is still waiting for the remaining information. The available material does not establish whether his income is within the limit. He asks whether the office can keep his application moving while he obtains what is missing.", "question": "Test question: does the worker distinguish missing information from evidence of ineligibility?", "allowedOutcome": "Request the missing information and wait.", "expected": "Section 3 requires a request for missing income information and reassessment when it is supplied. Section 4 requires complete information for an approval or decline decision; neither outcome is supported yet.", "dialogue": [["Applicant", "“My address is up to date, but I’m still waiting for part of my income information. Does that mean I’m not eligible?”"], ["Worker", "“We can verify your address, but we need the missing income information before deciding. Please provide it so we can reassess your application.”"]], "workerOutcome": "The case waits for information, without a decline decision.", "finding": "Consistent with the rules: the worker identifies what is missing and postpones the decision instead of treating an incomplete file as ineligibility."}};
+Object.entries(scenarioDescriptions).forEach(([id,fields])=>Object.assign(scenarioCases[id],fields));
+const systemAlternative={
+ worker:['R3'],invalid:null,blockedNode:'B',
+ dialogue:[['Applicant','“The register has my old address, but this is valid proof of my new one. Can you use it?”'],['Worker','“The rules accept your proof, but the application system will not let me proceed without a registry match.”'],['Applicant','“So I meet the requirement, but you cannot move the application forward?”'],['Worker','“That is the conflict. I need to flag it for resolution; I cannot complete the application here.”']],
+ workerOutcome:'The worker recognizes the proof; the system blocks progress.',
+ finding:'Implementation conflict: the response accepts §2, but the assumed software constraint prevents the next step. The purple node marks the blockage. This is different from treating the registry match as an eligibility requirement.',
+ explanations:{R3:'The application reaches address verification, where the assumed system constraint blocks further progress.'}
+};
+function currentScenario(){const base=scenarioCases[scenarioKey];return document.getElementById('test-condition').value==='system'&&scenarioKey==='alternative'?{...base,...systemAlternative,explanations:{...base.explanations,...systemAlternative.explanations}}:base;}
+const profileParameters=[
+ {id:'family-knowledge',group:'family',label:'Knowledge of the rules',compare:true,choices:[['basic','Knows the benefit, not the procedure','You know the benefit exists but have not read the documentation rules.'],['informed','Knows the relevant documentation rule','You have read the relevant documentation rule and know which alternatives it permits.']],value:'basic'},
+ {id:'family-response',group:'family',label:'Response tendency',choices:[['accept','Usually follows the first instruction','You tend to follow the first instruction, while remaining able to ask questions.'],['clarify','Usually asks for clarification','You tend to ask for clarification when an instruction is unclear.'],['question','Usually asks for the reason','You tend to ask for a reason or another option when an instruction conflicts with your understanding.']],value:'clarify'},
+ {id:'family-return',group:'family',label:'Another office visit',choices:[['costly','Requires time off and childcare','Another office visit would require time off work and childcare arrangements.'],['flexible','Can return without much difficulty','You can arrange another office visit without major practical difficulty.']],value:'costly'},
+ {id:'family-digital',group:'family',label:'Digital access',choices:[['limited','Phone access; may need assistance','You have phone access but may need assistance with an online procedure.'],['reliable','Can complete online procedures','You have reliable access and can complete online procedures independently.']],value:'limited'},
+ {id:'test-condition',group:'worker',label:'Application system',compare:true,choices:[['rules','Allows either verification route','The system allows the verification alternatives in the formal rules.'],['system','Requires a registry match','The system will not advance the application unless the municipal address matches.']],value:'rules',hint:''},
+ {id:'worker-time',group:'worker',label:'Time available',choices:[['normal','Time to review the case','You have time to review the case and clarify questions.'],['queue','Queue waiting; limited time','A queue is waiting and your time for this encounter is limited.']],value:'normal'}
+];
+for(const group of ['family','worker'])document.getElementById(group+'-controls').innerHTML=profileParameters.filter(p=>p.group===group).map(p=>`<div class="parameter"><div class="parameter-heading"><label for="${p.id}">${p.label}</label><label class="vary"><input type="checkbox" data-vary="${p.id}" ${p.compare?'checked':''}> Compare</label></div><select id="${p.id}">${p.choices.map(([value,label])=>`<option value="${value}" ${p.value===value?'selected':''}>${label}</option>`).join('')}</select>${p.hint?`<small>${p.hint}</small>`:''}</div>`).join('');
+function pickerValue(id){const p=profileParameters.find(p=>p.id===id);return p.choices.find(c=>c[0]===document.getElementById(id).value);}
+function updatePicker(){
+ const example=scenarioCases[document.getElementById('scenario-choice').value];
+ const applicationFacts=['Municipal record matches','Valid proof supplied','Income information','Income within limit'].map((label,i)=>label+': '+example.facts[i]).join('; ')+'. ';
+ const family=profileParameters.filter(p=>p.group==='family').map(p=>pickerValue(p.id)[2]).join(' ');
+ document.getElementById('family-brief').textContent='You represent the family seeking housing support. '+example.situation+' '+family+' Seek support and respond to what the worker actually says. You do not know the worker’s private system constraints or workload. Do not assume that any particular outcome will occur.';
+ document.getElementById('worker-brief').textContent='You handle the housing-support application under S3 §§1–4. Application facts: '+applicationFacts+'You see the submitted documents and what the family communicates. '+pickerValue('test-condition')[2]+' '+pickerValue('worker-time')[2]+' Decide and explain the next step; ask for information when needed. You do not receive the family’s knowledge, response-tendency or resource profile.';
+}
+let scenarioKey='alternative',scenarioHasRun=false,scenarioRoute='worker';
+const scenarioGraph=document.getElementById('scenario-graph');
+// Copy the map geometry without its selection state, IDs or event handlers.
+scenarioGraph.setAttribute('viewBox',graph.getAttribute('viewBox'));
+scenarioGraph.innerHTML=graph.innerHTML.replaceAll('arrow-active','scenario-arrow-active').replaceAll('id="arrow"','id="scenario-arrow"').replaceAll('url(#arrow)','url(#scenario-arrow)');
+scenarioGraph.querySelectorAll('.graph-edge,.graph-node').forEach(el=>{
+ const isEdge=el.classList.contains('graph-edge');
+ el.setAttribute('class',isEdge?'scenario-edge':'scenario-node');
+ if(isEdge){el.dataset.scenarioRecord=el.dataset.record;delete el.dataset.record;}else{el.dataset.scenarioEntity=el.dataset.entity;delete el.dataset.entity;}
+ ['tabindex','role','aria-pressed','aria-expanded','aria-controls'].forEach(a=>el.removeAttribute(a));
+});
+scenarioGraph.querySelectorAll('.hit').forEach(el=>el.remove());
+scenarioGraph.insertAdjacentHTML('afterbegin','<defs><marker id="scenario-arrow-deviation" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L6 3L0 6" fill="#a96728"/></marker></defs>');
+
+function encounterEvents(){
+ const say=(actor,text)=>({actor,text});
+ const tool=(actor,name,request,result,detail)=>({actor,name,request,result,detail});
+ const guide=source.sections.find(s=>s.locator==='§2').passage;
+ const costly=document.getElementById('family-return').value==='costly';
+ const digital=document.getElementById('family-digital').value==='limited';
+ const informed=document.getElementById('family-knowledge').value==='informed';
+ const busy=document.getElementById('worker-time').value==='queue';
+ const tendency=document.getElementById('family-response').value;
+ if(scenarioKey==='alternative'){
+  const events=[
+   tool('Family','Checks its document folder','Find proof of the new address and income documents.','Proof of the new address and the complete income file are available.','These are the documents supplied in Rosa’s case.'),
+   say('Family',informed?'I have proof of my new address and all my income documents. The guide says you can accept this proof even though the register has my old address.':'I’ve moved, but the register still has my old address. I brought proof of the new one and my income documents. Can I apply with these?'),
+   say('Worker',busy?'Let me check the address first. There are other people waiting, so we’ll start there.':'Let me check what the register shows and compare it with the proof you brought.'),
+   tool('Worker','Checks the municipal register','Look up the address on Rosa’s record.','The registered address does not match the application.','The register contains the old address; Rosa’s submitted proof shows her new address.'),
+   say('Worker','The register has your old address. I’ll check the documentation rule before we continue.'),
+   tool('Worker','Reads the rulebook','Which documents can verify an address?','Section 2 allows either a matching record or valid proof of address.',guide)
+  ];
+  if(document.getElementById('test-condition').value==='system'){
+   events.push(
+    say('Worker','Your proof meets the rule. I’ll attach it and try to move the application to the next step.'),
+    tool('Worker','Uses the application system','Record verification by alternative proof; continue to the income check.','Blocked: a matching registry address is required.','The selected system setting prevents this transition. The application remains at address verification.'),
+    say('Worker','The software won’t let me continue without a registry match, even though your proof is accepted by the rules.')
+   );
+  }else{
+   events.push(say('Worker','I see the alternative in the rulebook, but I still need the register to match before I will move this forward.'));
+  }
+  events.push(
+   tool('Family','Consults the public guide','Can valid proof replace an outdated registry address?','The guide lists valid proof as an alternative.',guide),
+   say('Family',tendency==='accept'?'All right. What do I need to do next?':tendency==='question'?'The guide says this proof is enough. What rule requires me to update the register first?':'The guide says you can use this proof. Is the problem my documents, or getting the system to accept them?')
+  );
+  if(document.getElementById('test-condition').value==='system'){
+   events.push(
+    say('Worker','Your documents are sufficient for address verification. The problem is the software. I can record the conflict for review, but I cannot approve the application here.'),
+    say('Family',costly?'Another visit means taking time off and arranging childcare. Can you keep the documents and tell me what happens next?':'Can you keep the documents and tell me what I should do before I come back?'),
+    tool('Worker','Adds a case note','Record valid proof, the registry mismatch and the blocked verification step; request review.','The note is saved; the application is still waiting at address verification.','A review request records the problem. It does not change the verification status or complete an income assessment.'),
+    say('Worker','I’ve recorded the problem and requested review. There is no decision yet. You can ask the office for an update on this application.'),
+    say('Family',digital?'Please write down how to ask for an update. I use my phone, but I may need help with the online system.':'I’ll check the application online. If it is still waiting, I’ll ask the office for an update.')
+   );
+  }else{
+   events.push(
+    say('Worker','I need you to update the register and return with matching information.'),
+    say('Family',costly?'I’ll have to arrange time off and childcare again. Can you at least keep the documents I brought?':'All right. Can you keep these documents while I update the register?'),
+    tool('Worker','Adds a case note','Record a request for an updated registry address.','The application is left waiting for further address information.','The worker has added a requirement even though the supplied proof satisfies Section 2.'),
+    say('Worker','The application will wait here until you return with the updated information.')
+   );
+  }
+  return events;
+ }
+ if(scenarioKey==='straight')return [
+  tool('Family','Checks its document folder','Find current address and income documents.','The address and complete income documents are available.','Elena’s documents match the application.'),
+  say('Family','Here are my address and income documents. Is there anything else you need?'),
+  say('Worker','I’ll check the address and then review the income information.'),
+  tool('Worker','Checks the municipal register','Compare the registered address with the application.','The addresses match.','Address verification can proceed under Section 2.'),
+  tool('Worker','Reads the eligibility rule','What is needed for an approval decision?','Section 4 requires complete income information and income within the limit.',source.sections.find(s=>s.locator==='§4').passage),
+  tool('Worker','Uses the application system','Verify the address and assess the submitted income information.','Address verified; income file complete; income within the limit.','Both criteria are satisfied by the case documents.'),
+  say('Worker','Your address is verified and your income is within the limit. I can approve the application.'),
+  say('Family','Will the decision be recorded so I can check it later?'),
+  tool('Worker','Records the decision','Save approval of the application.','The application status is Approved.','This records the decision; no benefit payment is represented in this encounter.'),
+  say('Worker','Yes, the approval is now recorded on your application.'),
+  tool('Family','Checks the application status','Look up the decision on its own application.','Approved.','The family can see its application’s public status.')
+ ];
+ return [
+  tool('Family','Checks its document folder','Find the income documents requested for the application.','Some income information is available; the rest is still pending.','Luis has not yet received the remaining information.'),
+  say('Family','My address is up to date, but I’m still waiting for part of my income information. Does that mean I’m not eligible?'),
+  say('Worker','Let me check the file and what the rules say about missing information.'),
+  tool('Worker','Checks the application file','Verify the address and check whether the income file is complete.','Address verified. Income information incomplete.','The documents do not yet establish whether household income is within the limit.'),
+  tool('Worker','Reads the rulebook','How should an incomplete income file be handled?','Section 3 calls for the missing information and reassessment when it arrives.',source.sections.find(s=>s.locator==='§3').passage),
+  say('Worker','We need the remaining income information before we can decide. An incomplete file does not mean you are ineligible.'),
+  say('Family',digital?'Can you write down what is missing? I may need help supplying it online.':'Can I see what is missing on my application so I can supply it when it arrives?'),
+  tool('Worker','Uses the application system','Record the missing income information and leave the decision pending.','The application is waiting for income information.','No approval or decline decision is recorded.'),
+  say('Worker','I’ve recorded the outstanding information. Once you supply it, we can reassess the application.'),
+  tool('Family','Checks the document request','Read the request attached to its application.','The request for the remaining income information is available.','The family sees the document request, not the worker’s private notes.'),
+  say('Family','I’ll use this request to check what I still need and provide it when it arrives.')
+ ];
+}
+function renderEncounter(){
+ const entries=encounterEvents();
+ document.getElementById('scenario-dialogue').innerHTML=entries.map(e=>`<li class="encounter-entry ${e.actor==='Worker'?'worker':'family'}"><div class="encounter-who">${e.actor}</div>${e.name?`<div class="encounter-tool"><div class="tool-name">${escapeText(e.name)}</div><p class="tool-result">${escapeText(e.result)}</p><details><summary>View tool activity</summary><dl><dt>Request</dt><dd>${escapeText(e.request)}</dd><dt>Return</dt><dd>${escapeText(e.detail)}</dd></dl></details></div>`:`<p>${escapeText(e.text)}</p>`}</li>`).join('');
+}
+
+function paintScenario(){
+ const example=currentScenario(),route=scenarioHasRun?example[scenarioRoute]:[];
+ const nodes=new Set(route.flatMap(id=>[records[id].subject_id,records[id].object_id]));
+ scenarioGraph.querySelectorAll('.scenario-edge').forEach(edge=>{
+  const id=edge.dataset.scenarioRecord,active=route.includes(id),invalid=active&&scenarioRoute==='worker'&&id===example.invalid;
+  edge.classList.toggle('on-route',active);edge.classList.toggle('deviation',invalid);
+  edge.querySelector('.line').setAttribute('marker-end',invalid?'url(#scenario-arrow-deviation)':active?'url(#scenario-arrow-active)':'url(#scenario-arrow)');
+ });
+ scenarioGraph.querySelectorAll('.scenario-node').forEach(node=>{const id=node.dataset.scenarioEntity;node.classList.toggle('on-route',nodes.has(id));node.classList.toggle('system-block',scenarioHasRun&&scenarioRoute==='worker'&&id===example.blockedNode);node.classList.toggle('deviation',scenarioHasRun&&scenarioRoute==='worker'&&!!example.invalid&&id===records[example.invalid].object_id);});
+ scenarioGraph.setAttribute('aria-label',scenarioHasRun?(scenarioRoute==='allowed'?'Permitted route: ':'Mock worker route: ')+route.map(id=>labels[id]).join(', '):'Housing support flow; scenario not yet run');
+ document.querySelectorAll('[data-route]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.route===scenarioRoute)));
+ const caption=document.getElementById('result-route-caption');if(caption)caption.textContent=scenarioRoute==='allowed'?'Green shows the path supported by the written rules.':example.blockedNode?'Green shows progress made. Purple marks where the software stops the case.':example.invalid?'Green shows progress made. The dashed amber arrow is the unnecessary request.':'Green shows the path followed in the encounter.';
+ const steps=document.getElementById('scenario-steps');steps.hidden=!scenarioHasRun;
+ steps.innerHTML=route.map(id=>{const r=records[id],invalid=scenarioRoute==='worker'&&id===example.invalid,passage=source.sections.find(section=>section.locator===r.evidence.locator);return `<li><strong>${complexEntities.find(e=>e[0]===r.subject_id)[1]} → ${complexEntities.find(e=>e[0]===r.object_id)[1]}</strong><p class="${invalid?'deviation-note':''}">${(scenarioRoute==='allowed'?scenarioCases[scenarioKey]:example).explanations[id]}</p><details><summary>${r.evidence.source_id} ${r.evidence.locator}</summary><blockquote>${escapeText(passage.passage)}</blockquote></details></li>`;}).join('');
+}
+function chooseScenario(){
+ updatePicker();
+ scenarioKey=document.getElementById('scenario-choice').value;scenarioHasRun=false;document.getElementById('condition-description').textContent=document.getElementById('test-condition').value==='rules'?'Input: case facts + S3 §§1–4. No additional workplace constraint.':'Same input + assumed software rule: processing requires a matching municipal address.';scenarioRoute='worker';
+ const example=currentScenario();document.getElementById('scenario-situation').textContent=example.situation;document.getElementById('scenario-question').textContent=example.question;
+ document.getElementById('scenario-facts').innerHTML=['Record matches','Valid proof supplied','Income information','Income within limit'].map((label,i)=>`<div><dt>${label}</dt><dd>${example.facts[i]}</dd></div>`).join('');
+ document.getElementById('scenario-results').hidden=true;document.querySelector('.scenario-graph-wrap').hidden=true;paintScenario();
+}
+document.getElementById('scenario-choice').addEventListener('change',chooseScenario);
+document.getElementById('run-scenario').addEventListener('click',()=>{scenarioHasRun=true;const example=currentScenario();document.getElementById('scenario-results').hidden=false;document.querySelector('.scenario-graph-wrap').hidden=false;document.getElementById('allowed-explanation').textContent=example.expected;renderEncounter();document.getElementById('scenario-finding').classList.toggle('discrepancy',!!example.invalid||!!example.blockedNode);document.getElementById('allowed-outcome').textContent=example.allowedOutcome;document.getElementById('worker-outcome').textContent=example.workerOutcome;document.getElementById('scenario-finding').textContent=example.finding;paintScenario();});
+document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>{scenarioRoute=button.dataset.route;paintScenario();}));
+function switchView(view){
+ document.querySelectorAll('[data-view]').forEach(tab=>{const active=tab.dataset.view===view;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
+ document.getElementById('map-panel').hidden=view!=='map';document.getElementById('testing-panel').hidden=view!=='testing';
+ if(view==='map')matchColumnHeight();
+}
+document.querySelectorAll('[data-view]').forEach(tab=>{
+ tab.addEventListener('click',()=>switchView(tab.dataset.view));
+ tab.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const view=event.key==='Home'?'map':event.key==='End'?'testing':tab.dataset.view==='map'?'testing':'map';switchView(view);document.querySelector('[data-view="'+view+'"]').focus();}});
+});
+const outcomeNames={approve:'Approve',wait:'Request missing information',escalate:'Flag system conflict',blocked:'Stop at system block',extra:'Demand unnecessary proof',decline:'Decline prematurely'};
+const batchCases=[
+ {id:'straight',name:'Straightforward application',rules:{approve:19,extra:1},system:{approve:19,extra:1}},
+ {id:'alternative',name:'Alternative proof of address',rules:{approve:16,extra:4},system:{escalate:2,blocked:18}},
+ {id:'missing',name:'Missing income information',rules:{wait:17,decline:3},system:{wait:17,decline:3}}
+];
+function renderBatch(){
+ const selectedCase=batchCases.find(c=>c.id===scenarioKey);
+ document.getElementById('compare-case-name').textContent=selectedCase.name;
+ const names={approve:'Approved',wait:'Waiting for income information',escalate:'Blocked; referred for review',blocked:'Blocked; no referral',extra:'Asked for unnecessary proof',decline:'Declined before income was known'};
+ document.getElementById('batch-distributions').innerHTML=['rules','system'].map(condition=>`<section class="distribution"><h3>${condition==='rules'?'Software accepts either proof':'Software requires a registry match'}</h3><p class="compare-count">20 encounters</p>${Object.entries(selectedCase[condition]).map(([key,count])=>`<div class="bar-row ${['extra','decline'].includes(key)?'problem':['blocked','escalate'].includes(key)?'blocked':''}"><div class="bar-label"><span>${names[key]}</span><strong>${count}/20</strong></div><div class="bar-track"><div class="bar-fill" style="width:${count/20*100}%"></div></div></div>`).join('')}</section>`).join('');
+ const findings={alternative:'With either proof accepted, 16 of 20 encounters reach approval. Requiring a registry match stops all 20; two are referred for review.',straight:'The registry already matches, so the software requirement makes no difference here. Both settings produce 19 approvals and one unnecessary request.',missing:'Changing the address requirement does not resolve the missing income information. In both settings, 17 encounters wait for documents and three end in a premature decline.'};
+ document.getElementById('compare-takeaway').textContent=findings[scenarioKey];
+}
+function setTestView(view){if(view!=='batch')heroVisited=1;showHeroStep(view==='batch'?5:1);}
+document.querySelectorAll('[data-test-view]').forEach(button=>button.addEventListener('click',()=>setTestView(button.dataset.testView)));
+profileParameters.forEach(p=>document.getElementById(p.id).addEventListener('change',chooseScenario));
+renderBatch();
+document.getElementById('scenario-choice').value='alternative';
+chooseScenario();
+const testingPanel=document.getElementById('testing-panel');
+const wizard=document.createElement('div');wizard.className='hero-wizard';
+wizard.innerHTML=`<nav class="hero-progress" aria-label="Simulation steps">${['Case','Participants','Encounter','Result','Compare'].map((name,i)=>`<button type="button" data-hero-step="${i+1}">${i+1} ${name}</button>`).join('')}</nav>${['Choose a case','Set up the two sides','Watch the encounter','Understand the result','Compare this case'].map((title,i)=>`<section class="hero-stage" id="hero-stage-${i+1}" hidden><h2 tabindex="-1">${title}</h2><div class="hero-content"></div><div class="hero-actions"></div></section>`).join('')}`;
+testingPanel.prepend(wizard);
+const stageContent=n=>document.querySelector('#hero-stage-'+n+' .hero-content');
+const move=(selector,target)=>{const element=document.querySelector(selector);target.append(element);return element;};
+const caseControl=move('.case-control',stageContent(1));
+caseControl.querySelector('.vary').remove();
+move('#scenario-situation',stageContent(1));
+move('.case-description',stageContent(1));
+const participantGrid=move('.participant-grid',stageContent(2));
+
+for(const group of ['family','worker']){
+ const controls=document.getElementById(group+'-controls');
+ controls.querySelectorAll('.vary').forEach(label=>label.remove());
+ const card=controls.closest('.participant-card');
+ const summary=document.createElement('p');summary.className='participant-summary';summary.id=group+'-summary';card.insertBefore(summary,controls);
+ const detail=document.createElement('details');detail.className='participant-adjust';detail.innerHTML='<summary>Adjust '+group+'</summary>';card.insertBefore(detail,controls);detail.append(controls);
+}
+move('.participant-briefs',stageContent(2));
+const start=move('#run-scenario',document.querySelector('#hero-stage-2 .hero-actions'));start.textContent='Start encounter →';
+move('#scenario-dialogue',stageContent(3));
+
+const resultBox=move('#scenario-results',stageContent(4));
+const expected=document.querySelector('.comparison section');
+const outcome=document.getElementById('worker-outcome');
+const summary=document.createElement('div');
+summary.innerHTML='<p class="result-headline" id="result-headline"></p><div class="result-comparison"><section id="result-expected"><h3>What should happen</h3></section><section id="result-actual"><h3>What happened in the encounter</h3></section></div><section class="result-why"><h3 id="result-why-label">Why it stopped</h3></section>';
+summary.querySelector('#result-expected').append(document.getElementById('allowed-outcome'));
+summary.querySelector('#result-actual').append(outcome);
+summary.querySelector('.result-why').append(document.getElementById('scenario-finding'));
+resultBox.prepend(summary);
+const ruleDetails=document.createElement('details');ruleDetails.className='result-detail';ruleDetails.innerHTML='<summary>Read the relevant rules</summary>';ruleDetails.append(expected);
+expected.querySelector('h2').remove();
+const passages=document.createElement('div');passages.className='rule-passages';passages.id='result-rule-passages';ruleDetails.append(passages);
+resultBox.querySelector('.comparison').remove();
+const flowDetails=document.createElement('details');flowDetails.className='result-detail';flowDetails.innerHTML='<summary>Compare the paths on the map</summary>';
+move('.route-controls',flowDetails);
+const caption=document.createElement('p');caption.className='route-caption';caption.id='result-route-caption';flowDetails.append(caption);
+move('.scenario-graph-wrap',flowDetails);
+resultBox.append(flowDetails,ruleDetails);move('#scenario-steps',flowDetails);
+const resultSummaries={
+ straight:{headline:'Elena’s application is approved.',expected:'Verify her address, check her income and approve the application.',actual:'The worker checks the documents and approves her application.',why:'Her address and income documents meet the requirements. The worker uses them without asking for anything extra.'},
+ alternative:{headline:'Rosa is asked to return even though her proof is valid.',expected:'Accept her proof of address, check her income and approve the application.',actual:'The worker tells Rosa to update the register and come back.',why:'The worker treats a matching register as compulsory. The written rules accept the proof Rosa already brought, so this request creates an unnecessary extra step.'},
+ system:{headline:'Rosa’s application is stuck at address verification.',expected:'Accept her proof of address, check her income and approve the application.',actual:'The worker accepts her proof but cannot move the application forward.',why:'The software requires the address to match the municipal register, even though the written rules allow another form of proof. The worker flags the problem, but Rosa leaves without a decision.'},
+ missing:{headline:'Luis’s application waits for his income documents.',expected:'Request the missing income information before making a decision.',actual:'The worker asks Luis for the remaining documents and keeps the decision open.',why:'There is not enough information to determine eligibility. Waiting for the missing documents follows the rules; it does not mean Luis has been found ineligible.'}
+};
+function explainResult(){
+ const key=scenarioKey==='alternative'&&currentScenario().blockedNode?'system':scenarioKey;
+ const item=resultSummaries[key];
+ document.getElementById('result-headline').textContent=item.headline;
+ document.getElementById('allowed-outcome').textContent=item.expected;
+ document.getElementById('worker-outcome').textContent=item.actual;
+ document.getElementById('scenario-finding').textContent=item.why;
+ document.getElementById('result-why-label').textContent=key==='system'?'Why it stopped':key==='alternative'?'Why this is an extra burden':key==='missing'?'Why the case is waiting':'Why this follows the rules';
+ const sections=scenarioKey==='missing'?['2','3','4']:['2','4'];
+ passages.innerHTML=sections.map(n=>{const section=source.sections.find(x=>x.locator==='§'+n);return `<blockquote><strong>Section ${n}</strong><br>${escapeText(section.passage)}</blockquote>`;}).join('');
+}
+document.getElementById('run-scenario').addEventListener('click',explainResult);
+const batch=move('#batch-panel',stageContent(5));batch.hidden=false;
+const design=document.querySelector('.test-design');design.querySelector('summary').textContent='How it works';design.open=false;wizard.prepend(design);const mode=document.createElement('p');mode.className='simulation-mode';mode.textContent='Mockup';wizard.prepend(mode);
+// Retire empty picker shells while retaining the hidden condition field used by its state updater.
+move('#condition-description',wizard);
+for(const selector of ['.test-views','#single-case-panel'])testingPanel.querySelector(selector)?.remove();
+let heroStep=1,heroVisited=1;
+function renderParticipantSummaries(){
+ document.getElementById('family-summary').textContent=[pickerValue('family-knowledge')[1],pickerValue('family-return')[1]].join('\n');
+ document.getElementById('worker-summary').textContent=['System: '+pickerValue('test-condition')[1].toLowerCase(),pickerValue('worker-time')[1]].join('\n');
+}
+function showHeroStep(n,focus=false){
+ if(n===5)renderBatch();
+ heroStep=n;heroVisited=Math.max(heroVisited,n);
+ wizard.querySelectorAll('.hero-stage').forEach((stage,i)=>stage.hidden=i+1!==n);
+ wizard.querySelectorAll('[data-hero-step]').forEach(button=>{const step=Number(button.dataset.heroStep);button.disabled=step>heroVisited;if(step===n)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
+ renderParticipantSummaries();
+ if(focus){document.querySelector('#hero-stage-'+n+'>h2').focus({preventScroll:true});wizard.scrollIntoView({block:'start'});}
+}
+function addHeroButton(stage,label,target,back=false){const button=document.createElement('button');button.type='button';button.className=back?'hero-back':'hero-next';button.textContent=label;button.addEventListener('click',()=>showHeroStep(target,true));document.querySelector('#hero-stage-'+stage+' .hero-actions').append(button);}
+addHeroButton(1,'Next →',2);addHeroButton(2,'← Back',1,true);addHeroButton(3,'See what happened →',4);addHeroButton(3,'← Back',2,true);addHeroButton(4,'Compare variations →',5);addHeroButton(4,'← Back',3,true);addHeroButton(5,'← Back to result',4,true);
+start.addEventListener('click',()=>showHeroStep(3,true));
+wizard.querySelectorAll('[data-hero-step]').forEach(button=>button.addEventListener('click',()=>showHeroStep(Number(button.dataset.heroStep),true)));
+function invalidateHero(){heroVisited=Math.min(heroVisited,2);if(heroStep>2)showHeroStep(2);else showHeroStep(heroStep);}
+profileParameters.forEach(parameter=>document.getElementById(parameter.id).addEventListener('change',invalidateHero));
+document.getElementById('scenario-choice').addEventListener('change',()=>{heroVisited=1;showHeroStep(1);});
+document.getElementById('test-condition').value='system';
+chooseScenario();
+showHeroStep(1);
+
+</script>
+</body>
+</html>
