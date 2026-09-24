@@ -560,6 +560,7 @@ const tourSteps=[
  {target:'section[aria-labelledby="entities-heading"]',title:'Inspect a step',text:'Click a box or a row in Entities to see what it represents, what it involves and which source supports it. Here, Verify address is selected.',prepare:()=>{tourMap();selectedEntity='B';highlightEntity();}},
  {target:'.relation-item[data-item="R4"]',title:'Read the condition connecting two steps',text:'Relationships explain when movement is allowed. This connection permits the income check once the address is verified through either accepted route.',prepare:()=>{tourMap();select('R4');}},
  {target:'#source-S3-2',title:'Check the source',text:'The highlighted passage supports the selected connection. Sources keep the map open to inspection: you can read the rule behind a step instead of taking the diagram on trust.',prepare:()=>{tourMap();select('R4');}},
+ {target:'.view-tabs',title:'From rules to an encounter',text:'So far, we have mapped what the rules allow. Next, Scenario testing uses that same procedure to explore what happens when a family and a worker try to navigate it. We’ll switch views and start with one case.',next:'Open scenario testing →',prepare:tourMap},
  {target:'#hero-stage-1 .hero-content',title:'Start with a particular case',text:'The case sets out the family’s circumstances and documents. These facts stay fixed when you later compare how the same case turns out under different conditions.',prepare:()=>tourScenario(1)},
  {target:'.participant-grid',title:'Give each side its own perspective',text:'The family and worker have different information and constraints. Open Adjust family or Adjust worker to explore their settings; each participant receives its own brief.',prepare:()=>tourScenario(2)},
  {target:'#scenario-dialogue .encounter-entry:nth-child(2)',title:'Follow the conversation',text:'Read the encounter in order. The two participants ask questions, explain decisions and agree—or fail to agree—on the next step.',prepare:()=>tourScenario(3)},
@@ -582,7 +583,7 @@ async function showTourStep(index){
  document.getElementById('tour-title').textContent=step.title;
  document.getElementById('tour-copy').textContent=step.text;
  tour.querySelector('.tour-back').disabled=index===0;
- tour.querySelector('.tour-next').textContent=index===tourSteps.length-1?'Finish':'Next →';
+ tour.querySelector('.tour-next').textContent=index===tourSteps.length-1?'Finish':step.next||'Next →';
  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
  if(!tour.open||epoch!==tourEpoch)return;
  const r=tourTarget.getBoundingClientRect();
